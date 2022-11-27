@@ -10,16 +10,19 @@ module.exports = {
 			return transformEvent(event);
 		});
 	},
-	createEvent: async (args) => {
+	createEvent: async (args, req) => {
+		if (!req.isAuth) {
+			throw new Error("UnAuth");
+		}
 		const event = await EventModel.create({
 			title: args.eventInput.title,
 			description: args.eventInput.description,
 			price: args.eventInput.price,
 			date: new Date(),
-			creator: "6382e77bf3cc8ec2f360533f",
+			creator: req.userId,
 		});
 
-		const User = await UserModel.findById("6382e77bf3cc8ec2f360533f");
+		const User = await UserModel.findById(req.userId);
 
 		if (!User) {
 			throw new Error("No User Found");
