@@ -1,10 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import { useAuthContext } from "../context/auth-context";
 import "./Auth.css";
 
 function AuthPage() {
 	const emailEl = useRef();
 	const passwordEl = useRef();
 	const [isLogin, setLogin] = useState(true);
+	const authContext = useAuthContext();
+
+	useEffect(() => {
+		console.log("In Effect", authContext);
+	}, [authContext]);
 
 	const switchModeHandler = () => {
 		setLogin((prevValue) => {
@@ -17,7 +23,7 @@ function AuthPage() {
 		const email = emailEl.current.value;
 		const password = emailEl.current.value;
 
-		if (email.trim().length == 0 || password.trim().length == 0) {
+		if (email.trim().length === 0 || password.trim().length === 0) {
 			return;
 		}
 
@@ -60,6 +66,13 @@ function AuthPage() {
 				return res.json();
 			})
 			.then((resData) => {
+				if (resData?.data?.login?.token) {
+					authContext.login(
+						resData?.data?.login?.token,
+						resData?.data?.login?.userId,
+						resData?.data?.login?.tokenExpiration,
+					);
+				}
 				console.log(resData);
 			})
 			.catch((err) => {
@@ -85,6 +98,14 @@ function AuthPage() {
 					Switch to {isLogin ? "Signup" : "Login"}
 				</button>
 			</div>
+			{/* <button
+				type="button"
+				onClick={() => {
+					console.log(authContext);
+				}}
+			>
+				Click
+			</button> */}
 		</form>
 	);
 }
