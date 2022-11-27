@@ -1,6 +1,8 @@
 const bcrypt = require("bcryptjs");
 const EventModel = require("../../models/events");
 const UserModel = require("../../models/user");
+const BookingModel = require("../../models/booking");
+const booking = require("../../models/booking");
 
 const events = async (eventIds) => {
 	return await (
@@ -12,6 +14,14 @@ const events = async (eventIds) => {
 			creator: user.bind(this, event.creator),
 		};
 	});
+};
+
+const singleEvent = async (eventId) => {
+	const event = await EventModel.findById(eventId);
+	return {
+		...event._doc,
+		creator: user.bind(this, event.creator),
+	};
 };
 
 const user = async (userId) => {
@@ -75,6 +85,47 @@ module.exports = {
 		return {
 			email: user.email,
 			_id: user._id,
+		};
+	},
+	bookings: async () => {
+		const bookings = await BookingModel.find();
+		return bookings.map((booking) => {
+			return {
+				...booking,
+				user: user(booking.user),
+				event: singleEvent(booking.event),
+				createdAt: new Date(booking.createdAt).toISOString(),
+				updatedAt: new Date(booking.updatedAt).toISOString(),
+			};
+		});
+	},
+	bookEvent: async (args) => {
+		const event = await EventModel.findById(args.eventId);
+
+		if (!event) {
+			throw new Error("No Event Found");
+		}
+		const booking = await BookingModel.create({
+			user: "6382e77bf3cc8ec2f360533f",
+			event: event._id,
+		});
+		return {
+			...booking._doc,
+			user: user(booking.user),
+			event: singleEvent(booking.event),
+			createdAt: new Date(booking.createdAt).toISOString(),
+			updatedAt: new Date(booking.updatedAt).toISOString(),
+		};
+	},
+	cancelBooking: async (args) => {
+		const booking = await (
+			await BookingModel.findById(args.bookingId)
+		).populate("event");
+		await BookingModel.deleteOne({ _id: args.bookingId });
+
+		return {
+			...booking._doc.event._doc,
+			creator: user(booking._doc.event._doc.creator),
 		};
 	},
 };
