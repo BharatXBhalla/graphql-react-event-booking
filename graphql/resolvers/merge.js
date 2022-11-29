@@ -12,11 +12,13 @@ const events = async (eventIds) => {
 
 const singleEvent = async (eventId) => {
 	const event = await EventModel.findById(eventId);
+	if (!event) return {};
 	return transformEvent(event);
 };
 
 const user = async (userId) => {
 	const user = await UserModel.findById(userId);
+	if (!user) return {};
 	return {
 		...user._doc,
 		createdEvents: events.bind(this, user.createdEvents),
