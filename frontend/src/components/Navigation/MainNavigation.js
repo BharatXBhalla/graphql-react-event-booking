@@ -39,6 +39,9 @@ const MainNavigation = (props) => {
 							<NavLink to="/auth">Login</NavLink>
 						</li>
 					)}
+					<li>
+						<NavLink to="/experiment">Experiment</NavLink>
+					</li>
 				</ul>
 			</nav>
 		</header>

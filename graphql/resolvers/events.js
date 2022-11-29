@@ -4,9 +4,7 @@ const { transformEvent } = require("./merge");
 
 module.exports = {
 	events: async () => {
-		return await (
-			await EventModel.find()
-		).map((event) => {
+		return (await EventModel.find()).map((event) => {
 			return transformEvent(event);
 		});
 	},

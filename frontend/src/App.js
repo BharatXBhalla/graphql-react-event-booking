@@ -5,6 +5,7 @@ import EventsPage from "./pages/Events";
 import BookingsPage from "./pages/Bookings";
 import MainNavigation from "./components/Navigation/MainNavigation";
 import { AuthContextProvider, useAuthContext } from "./context/auth-context";
+import Experiment from "./pages/Experiment";
 
 function AppRoutes() {
 	const authContext = useAuthContext();
@@ -46,6 +47,8 @@ function AppRoutes() {
 					element={<BookingsPage></BookingsPage>}
 				></Route>
 			)}
+
+			<Route path="/experiment" element={<Experiment></Experiment>}></Route>
 		</Routes>
 	);
 }
